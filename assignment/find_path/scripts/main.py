@@ -1,8 +1,10 @@
-from graph import Graph
-from get_links import get_all_links
-
+from .graph  import Graph
+from .get_links import get_all_links
+import time
 
 def main(source, destination):
+    start_time = time.time()
+    print("Start Time = ", start_time // 60 % 60)
 
     graph = Graph(source, destination)
     graph.add(source, get_all_links(source), '0')
@@ -13,26 +15,24 @@ def main(source, destination):
         graph.set_previous(destination, source)
         return graph.get_path(destination)
     graph.prioritize(source)
+    if (graph.found):
+        return graph.done(time.time() - start_time)
 
     while (not graph.pq.empty()):
         if (graph.found):
-            print(graph.path)
-            print(graph)
-            return graph.path
+            graph.done(time.time() - start_time)
 
         nxt = graph.pq.get()[1]
         print("checking: " + nxt)
         if destination in graph.links(nxt):
             graph.set_previous(destination, nxt)
-            graph.get_path(destination)
-            print(graph.path)
-            print(graph)
-            return graph.path
+            graph.make_path(destination)
+            return graph.done(time.time() - start_time)
         else:
             graph.prioritize(nxt)
     return "No path found"
     
 # if __name__ == "__main__":
-#     main(source, destination)
+#     main("Rami Malek", "Iran")
 
     

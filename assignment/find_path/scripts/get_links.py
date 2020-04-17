@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import requests
 
 def get_links(title, cont=""):
@@ -30,8 +29,11 @@ def get_links(title, cont=""):
     elif "batchcomplete" in DATA and DATA["batchcomplete"]:
         cont = "" 
     for v in PAGES:
+        if "missing" in v and v["missing"]:
+            return {"titles": set(), "cont": cont}
         for l in v["links"]:
             titles.add(l["title"])
+    print("Read {0} links from {1}".format(len(titles), title))
     return  {"titles": titles, "cont": cont}
     
 def parse_links(title, titles, cont):
