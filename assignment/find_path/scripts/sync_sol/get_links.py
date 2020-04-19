@@ -1,5 +1,6 @@
 import requests
 
+
 def get_links(title, cont=""):
     S = requests.Session()
 

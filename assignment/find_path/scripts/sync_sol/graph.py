@@ -1,4 +1,4 @@
-from get_links import get_all_links
+from .get_links import get_all_links
 from queue import PriorityQueue
 
 class Graph():
@@ -32,6 +32,7 @@ class Graph():
     def prioritize(self, title):
         try:
             for link in self.links(title):
+                print(title)
                 if link in self.seen:
                     continue
                 ls = get_all_links(link)
@@ -51,7 +52,7 @@ class Graph():
                 self.pq.put((priority, link))
         except Exception as e:
             print(e)
-            print(self.graph)
+            print(self)
             return e
 
     def links(self, title):
