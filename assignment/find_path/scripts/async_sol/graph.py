@@ -1,5 +1,5 @@
-from .get_links import get_links
-from queue import PriorityQueue
+from .get_links import make_request, make_params, parse_response
+# from queue import PriorityQueue
 import asyncio
 import aiohttp
 
@@ -17,12 +17,17 @@ class Graph():
         self.start = source
         self.end = destination
         self.titles_to_visit = asyncio.Queue()
-        self.titles_to_visit.put_nowait(source)
+        self.titles_to_fetch = asyncio.Queue()
         self.found = False
         self.path = []
         self.seen = set()
         self.previous = {source : '0'}
         self.event = asyncio.Event()
+        # session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=5))
+        # self.session = session
+        self.titles_to_fetch.put_nowait(source)
+
+        #self.titles_to_visit.put_nowait(source)
 
     def __str__(self): 
         st = 'PATH: {0} \n'.format(str(self.path))
@@ -39,35 +44,62 @@ class Graph():
     def set_previous(self, title, previous):
         self.previous[title] = previous
 
-    async def search(self):
-        try:
-            while not self.titles_to_visit.empty():
-                # await self.event.wait()
-                if self.found:
+    # async def search(self):
+    #     try:
+    #         # while not self.titles_to_visit.empty():
+    #             # await self.event.wait()
+    #             # if self.found:
+    #             #     return self.path
+    #             await get_links()
+    #             # current = await self.titles_to_visit.get()
+    #             # if current not in self.seen:
+    #                 # conn = aiohttp.TCPConnector(limit=8)
+    #                 # async with self.session as session:
+    #                     # await get_links(session, current, self)
+    #                     # self.seen.add(current)
+    #     except Exception as e:
+    #         print(e)
+
+    async def search_links(self):
+        while True:
+            title, links = await self.titles_to_visit.get()
+            self.add(title, links)
+            self.seen.add(title)
+            print("checking", title)
+            if self.end in self.links(title):
+                    self.set_previous(self.end, title)
+                    self.make_path(self.end)
+                    print("FOUND")
+                    print(self)
+                    # self.session.close()
                     return self.path
-                current = await self.titles_to_visit.get()
-                if current not in self.seen:
-                    conn = aiohttp.TCPConnector(limit=7)
-                    async with aiohttp.ClientSession(connector=conn) as session:
-                        await get_links(session, current, self)
-                        self.seen.add(current)
+            for link in links:
+                if link not in self.seen and link != title:
+                    self.previous[link] = title
+                    await self.titles_to_fetch.put(link)
+
+    async def keep_getting_links(self):
+        try:
+            async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=5)) as session:
+                while True:
+                        if self.found:
+                            await session.close()
+                        title = await self.titles_to_fetch.get()
+                        response = await make_request(session, title)
+                        titles, cont = parse_response(response)
+                        print("Read {0} links from {1}".format(len(titles), title))
+                        while cont != None:
+                            response = await make_request(session, title, cont)
+                            more_titles, cont = parse_response(response)
+                            titles = titles.union(more_titles)
+                        await self.titles_to_visit.put((title, titles))
         except Exception as e:
             print(e)
+            print("An exception occurred when getting links")
+    
 
-    async def search_links(self, title, links):
-        self.add(title, links)
-        print("checking", title)
-        if self.end in self.links(title):
-                self.set_previous(self.end, title)
-                self.make_path(self.end)
-                print("FOUND")
-                print(self)
-                # return  self.path
-        for link in links:
-            if link not in self.seen and link != title:
-                self.previous[link] = title
-                await self.titles_to_visit.put(link)
-            
+
+                
     def links(self, title):
         return self.graph[title]['links']
 

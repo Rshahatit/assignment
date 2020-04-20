@@ -25,10 +25,22 @@ async def main(source, destination):
     # start_time = time.time()
     print("Start Time = ", s)
     graph = Graph(source, destination)
+    workers = [graph.search_links()]
+    workers += [graph.keep_getting_links() for _ in range(5)]
+    # workers.append(keep_getting_links())
+    for res in asyncio.as_completed(workers):
+        path = await res
+        elapsed = time.perf_counter() - s
+        # for c in asyncio.all_tasks():
+        #     c.cancel()
+        path = f'Path from {source} to {destination}: {path} completed in {elapsed:0.2f} seconds'
+        print(f'Path from {source} to {destination}: {path} completed in {elapsed:0.2f} seconds')
+
+        return path
     # task = asyncio.create_task(graph.search())
     # for res in asyncio.as_completed(task):
     #     path = await res
-    path = await graph.search()
+    # path = await graph.search()
     # for c in asyncio.all_tasks(asyncio.get_running_loop()):
     #     c.cancel()
     elapsed = time.perf_counter() - s
