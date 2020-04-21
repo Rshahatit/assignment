@@ -26,7 +26,6 @@ WORKDIR /wikiracer
 
 RUN make python-dependencies 
 
-
 COPY ./assignment /wikiracer/assignment
 
 # WORKDIR /wikiracer/assignment

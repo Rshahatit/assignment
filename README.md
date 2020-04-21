@@ -5,23 +5,23 @@
 ![Image of diagram](https://user-images.githubusercontent.com/11155241/79812892-03e0ff00-832f-11ea-9a14-4345c9b1b088.png)
 
 ## What the code does:
-The wikiracer code takes in a source or destination, can be a wiki url or a title for a wiki page. It starts at the source page and calls the media wiki api to find the wiki pages that have links on that page. It continues calling the media wiki api - searching for the destination page -  among the links on the upcoming pages. While it is requesting links on pages from the media wiki api it is asynchronously checking if any of the links it already has retrieved has the destination page among them. I use two asynchronous queues to give each kind of worker their jobs. One queue (titles to visit) is giving our search worker a title and a set of links on the page --- that worker checks if the destination page is in that set then adds all the links into a queue for the fetcher worker to fetch all the links for those pages. When the fetcher worker gets the links for the title it puts them in the queue (titles to visit) for the search worker to keep checking.
+The wikiracer code takes in a source or destination, can be a wiki url or a title for a wiki page. It starts at the source page and calls the media wiki api to find the wiki pages that have links on that page. It continues calling the media wiki api - searching for the destination page -  among the links on the upcoming pages. While it is requesting links on pages from the media wiki api it is asynchronously checking if any of the links it already has retrieved has the destination page among them. I use two asynchronous queues to give each kind of worker their jobs. One queue (titles to visit) is giving our search worker a title and a set of links on the page --- that worker checks if the destination page is in that set then adds all the links into a queue for the fetcher worker to fetch all the links for those pages. When the fetcher worker gets the links for the title it puts them in the queue (titles to visit) for the search worker to keep checking. I keep track of the depth by increamenting it each time I had a new set of links previous. So whenever the previous changes the depth will change because that means we are checking a new depth. I chose to stop searching after a depth of 15 and return to the user that a path could not be found up to that depth. I wrote a test for it but I have commented it out because it takes a long time.
 
 The code optimizes for the wall clock time of jumping from page to page like the instructions specifies. I chose to do this asynchronously because of the nature of how many IO operations occur and the time that is wasted waiting for that request. Doing it asynchronously allows me to only worry about one thread, the event loop will take care of running the workers whenever there is free time from a request. 
-I also have a Dockerfile included with my application. You can utilize it through the make file, I give instructions below. 
+I also have a Dockerfile included with my application. You can utilize it through the make file, I give instructions below. I realized in order to test you will need python 3.7 because of asyncio's new run method. I have provided a docker compose file so the tests will run in a docker container. 
 
 ## Instructions for how to run your Wikiracer:
 #### Testing:
 ```Shell 
 make test
 ```
-This command installs the requirements from the requirements.txt file and runs the automated tests end to end tests in django.
+This command installs the requirements from the requirements.txt file and runs the automated tests end to end tests in django in a docker container using the docker compose file.
 
 #### Spin up docker container with application running:
  ```Shell
- make serve-application
+ make run
  ```
-Your docker container will be listening on *localhost:8000*
+Runs the docker container that will be listening on *localhost:8000* through the docker compose file.
 
 #### You can send a post request with a (filling in source and dest with a wiki url or page title)
 ```Shell 
