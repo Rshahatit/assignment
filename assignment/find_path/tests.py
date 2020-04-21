@@ -15,33 +15,6 @@ class e2eTest(unittest.TestCase):
         self.same_src_dest_payload =  {"source": "Printer (computing)", "destination" : "Printer (computing)"}
         self.exist =  {"source": "Tennessee", "destination" : "Printer"}
 
-# I commented out this test because it takes a while to get to a depth of 15
-    # def test_depth(self):
-    #     # Issue a POST request.
-    #     response = self.client.post('/findpath/', content_type="application/json", data=self.exist)
-
-    #     # Check that the response is 200 OK.
-    #     self.assertEqual(response.status_code, 200)
-
-    #     # verify the path
-    #     res = response.json()
-    #     if res["error"]:
-    #         message = res["message"]
-    #         self.assertEqual(message, "path does not exist with a depth of 15 from the source page")
-
-    def test_same_src_dest(self):
-        # Issue a POST request.
-        response = self.client.post('/findpath/', content_type="application/json", data=self.same_src_dest_payload)
-
-        # Check that the response is 200 OK.
-        self.assertEqual(response.status_code, 400)
-
-        # verify the path
-        res = response.json()
-        if res["error"]:
-            message = res["message"]
-            self.assertEqual(message, "Source and destination should not be the same")
-
     def test_bad_payload(self):
         # Issue a POST request.
         response = self.client.post('/findpath/', content_type="application/json", data=self.bad_payload)
@@ -121,6 +94,16 @@ class e2eTest(unittest.TestCase):
             verified, message = self.verify_path(path)
             self.assertTrue(verified, message)
             print(f'Path from {source} to {destination}: {path} completed in {duration:0.2f} seconds')
+    
+    # verifies that each next element in the path is on the previous page.
+    def verify_path(self, path):
+        for i in range(len(path) - 1):
+            prev = path[i]
+            cur = path[i+1]
+            if cur not in get_all_links(prev):
+                return (False, f'Path was invalid {cur} is not found on {prev}\'s wiki page')
+        return (True, 'Path was valid')
+
 
     #this is also a longer test if you want to run it.
     #aleut is an native alaskan people
@@ -147,12 +130,17 @@ class e2eTest(unittest.TestCase):
     #         self.assertTrue(verified, message)
     #         print(f'Path from {source} to {destination}: {path} completed in {duration:0.2f} seconds')
 
-    # verifies that each next element in the path is on the previous page.
-    def verify_path(self, path):
-        for i in range(len(path) - 1):
-            prev = path[i]
-            cur = path[i+1]
-            if cur not in get_all_links(prev):
-                return (False, f'Path was invalid {cur} is not found on {prev}\'s wiki page')
-        return (True, 'Path was valid')
+    # I commented out this test because it takes a while to get to a depth of 15
+    # def test_depth(self):
+    #     # Issue a POST request.
+    #     response = self.client.post('/findpath/', content_type="application/json", data=self.exist)
+
+    #     # Check that the response is 200 OK.
+    #     self.assertEqual(response.status_code, 200)
+
+    #     # verify the path
+    #     res = response.json()
+    #     if res["error"]:
+    #         message = res["message"]
+    #         self.assertEqual(message, "path does not exist with a depth of 15 from the source page")
 

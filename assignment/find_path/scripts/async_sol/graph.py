@@ -30,8 +30,8 @@ class Graph():
 
     def __str__(self): 
         st = 'PATH: {0} \n'.format(str(self.path))
-        for title in self.graph.keys():
-            st += 'Title: ' + title + '\nprev: ' + self.get_prev(title)  +  '\n' + str(len(self.links(title))) + '\n'
+        for title in self.seen:
+            st += 'Title: ' + title + '\nprev: ' + self.get_prev(title) + '\n'
         st += "Checked this many pages: " + str(len(self.seen)) + "\n"
         return st
     
@@ -44,10 +44,11 @@ class Graph():
             title, links = await self.titles_to_visit.get()
             # self.add(title, links)
             self.seen.add(title)
-            print("checking", title)
+            # print("checking", title)
             if self.end in links:
                     self.set_previous(self.end, title, 0)
                     self.make_path(self.end)
+                    print(f'Checked this many pages: {str(len(self.seen))} \n')
                     return self.path
             new_depth = self.get_depth(title) + 1
             # print(new_depth)

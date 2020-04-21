@@ -18,9 +18,9 @@ async def make_request(session, title, cont=None):
         async with session.get(URL, params=params, ssl=False) as response:
             res = await response.json()
             return res
-    except Exception as e:
-        print("tried to make request for ", title)
-        print(e)
+    except:
+        print("")
+        # print(e)
          
 
 def make_params(title, cont=None):
