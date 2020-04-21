@@ -1,6 +1,5 @@
 import requests
 
-
 def get_links(title, cont=""):
     S = requests.Session()
 
@@ -34,7 +33,7 @@ def get_links(title, cont=""):
             return {"titles": set(), "cont": cont}
         for l in v["links"]:
             titles.add(l["title"])
-    print("Read {0} links from {1}".format(len(titles), title))
+    # print("Read {0} links from {1}".format(len(titles), title))
     return  {"titles": titles, "cont": cont}
     
 def parse_links(title, titles, cont):

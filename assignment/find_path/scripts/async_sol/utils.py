@@ -1,9 +1,16 @@
 import asyncio
 import aiohttp
 
+'''
 
+Some functions for making the request to media wiki api and parsing the response.
+
+'''
+
+# thought I would need a semaphore to limit the amount of connections to media wiki 
+# was taken care of by aiohttps limit on a connector
 # sema = asyncio.BoundedSemaphore(7)
-# sema,
+
 async def make_request(session, title, cont=None):
     try:
         URL = "http://en.wikipedia.org/w/api.php"
@@ -14,6 +21,7 @@ async def make_request(session, title, cont=None):
     except Exception as e:
         print("tried to make request for ", title)
         print(e)
+         
 
 def make_params(title, cont=None):
     params = {
@@ -45,31 +53,8 @@ def parse_response(DATA):
     for v in PAGES:
         if "missing" in v and v["missing"]:
             return set(), cont
+        elif "links" not in v:
+            return set(), cont
         for l in v["links"]:
             titles.add(l["title"])
     return  titles, cont
-
-# async def get_links():
-#     """Crawl & add concurrently to `queue` for multiple `urls`."""
-#     try:
-#         workers = [keep_getting_links() for _ in range(5)]
-#         await asyncio.gather(workers)
-#         # response = await make_request(session, title)
-#         # titles, cont = parse_response(response)
-#         # print("Read {0} links from {1}".format(len(titles), title))
-#         # while cont != None:
-#         #     response = await make_request(session, title, cont)
-#         #     more_titles, cont = parse_response(response)
-#         #     titles = titles.union(more_titles)
-#         # await graph.search_links(title, titles)
-#     except Exception as e:
-#         print(e)
-#         print("An exception occurred when getting links")
-
-
-
-# def ():
-#     try:
-#         cont = ""
-#         DATA = get_links(title)
-#         return parse_links(title, DATA["titles"], DATA["cont"])
