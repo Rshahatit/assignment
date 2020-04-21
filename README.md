@@ -77,3 +77,16 @@ The search is faster but going back to the media wiki api call from earlier (tha
 * Python synchronous version - 			    one day
 * Python asynchronous version - 			    two days
 * Optimizing async, error checking, dockerizing -	    one day 
+
+## Resources
+
+### asyncio
+[Stack overflow - how does asyncio work](https://stackoverflow.com/questions/49005651/how-does-asyncio-actually-work/51116910#51116910)
+[Detailed article - chess example is here](https://realpython.com/async-io-python/#async-io-explained)
+
+[asyncio docs - current version in project requires python 3.7](https://docs.python.org/3/library/asyncio.html)
+
+
+### aiohttps
+[aiohttps tutorial](https://aiohttp-demos.readthedocs.io/en/latest/preparations.html#project-structure)
+
