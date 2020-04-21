@@ -6,7 +6,7 @@ python-dependencies:
 	pip3 install -r requirements.txt
 
 .PHONY: test-docker
-test:
+test-docker:
 	pip3 install -r requirements.txt && cd ./assignment && python3 manage.py test
 
 .PHONY: test
@@ -15,11 +15,11 @@ test:
 
 # must have python3.7 installed
 .PHONY: test-local
-test:
+test-local:
 	pip3 install -r requirements.txt && cd ./assignment && python3 manage.py test 
 
-.PHONY: serve-application
-serve-application:
+.PHONY: run-local
+run-local:
 	docker build -t wikiracer . && docker run -p 8000:8000 -t wikiracer 
 
 .PHONY: run

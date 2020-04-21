@@ -122,29 +122,30 @@ class e2eTest(unittest.TestCase):
             self.assertTrue(verified, message)
             print(f'Path from {source} to {destination}: {path} completed in {duration:0.2f} seconds')
 
+    #this is also a longer test if you want to run it.
     #aleut is an native alaskan people
-    def test_hard(self):
-        source = "Super Mario"
-        destination = "Aleut"
-        # Issue a POST request.
-        response = self.client.post('/findpath/', content_type="application/json", data=self.hard_payload)
+    # def test_hard(self):
+    #     source = "Super Mario"
+    #     destination = "Aleut"
+    #     # Issue a POST request.
+    #     response = self.client.post('/findpath/', content_type="application/json", data=self.hard_payload)
 
-        # verify the path
-        res = response.json()
-        path = res['path']
-        duration = res['duration']
-        if res["error"]:
-            self.assertEqual(response.status_code, 400)
-            message = res["message"]
-            self.assertEqual(message, "path does not exist with a depth of 15 from the source page")
-        else:
-            # Check that the response is 200 OK.
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(path[0], source, f'Path must start with {source}') # starts with source
-            self.assertEqual(path[len(path)-1], destination, f'Path must end with {destination}') # ends with destination
-            verified, message = self.verify_path(path)
-            self.assertTrue(verified, message)
-            print(f'Path from {source} to {destination}: {path} completed in {duration:0.2f} seconds')
+    #     # verify the path
+    #     res = response.json()
+    #     path = res['path']
+    #     duration = res['duration']
+    #     if res["error"]:
+    #         self.assertEqual(response.status_code, 400)
+    #         message = res["message"]
+    #         self.assertEqual(message, "path does not exist with a depth of 15 from the source page")
+    #     else:
+    #         # Check that the response is 200 OK.
+    #         self.assertEqual(response.status_code, 200)
+    #         self.assertEqual(path[0], source, f'Path must start with {source}') # starts with source
+    #         self.assertEqual(path[len(path)-1], destination, f'Path must end with {destination}') # ends with destination
+    #         verified, message = self.verify_path(path)
+    #         self.assertTrue(verified, message)
+    #         print(f'Path from {source} to {destination}: {path} completed in {duration:0.2f} seconds')
 
     # verifies that each next element in the path is on the previous page.
     def verify_path(self, path):

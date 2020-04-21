@@ -14,7 +14,7 @@ async def main(source, destination):
     # print("Start Time = ", s)
     graph = Graph(source, destination)
     workers = [graph.search_links()]
-    workers += [graph.keep_getting_links() for _ in range(5)]
+    workers += [graph.keep_getting_links() for _ in range(7)]
     depth_counter = 0
     for res in asyncio.as_completed(workers):
         path = await res
