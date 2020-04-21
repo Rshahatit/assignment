@@ -20,11 +20,3 @@ build:
 .PHONY: run
 run:
 	docker run -p 8000:8000 -t wikiracer
-
-	
-
-# .PHONY: test
-# test:
-# 	docker build . -t wikiracer
-
-# cd wikiracer && <ANOTHER COMMAND> && <ANOTHER COMMAND>
