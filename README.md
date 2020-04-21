@@ -3,32 +3,44 @@
 ## High Level Architecture 
 ### Diagram
 ![Image of diagram](https://user-images.githubusercontent.com/11155241/79812892-03e0ff00-832f-11ea-9a14-4345c9b1b088.png)
+
 ## What the code does:
 The wikiracer code takes in a source or destination, can be a wiki url or a title for a wiki page. It starts at the source page and calls the media wiki api to find the wiki pages that have links on that page. It continues calling the media wiki api - searching for the destination page -  among the links on the upcoming pages. While it is requesting links on pages from the media wiki api it is asynchronously checking if any of the links it already has retrieved has the destination page among them. I use two asynchronous queues to give each kind of worker their jobs. One queue (titles to visit) is giving our search worker a title and a set of links on the page --- that worker checks if the destination page is in that set then adds all the links into a queue for the fetcher worker to fetch all the links for those pages. When the fetcher worker gets the links for the title it puts them in the queue (titles to visit) for the search worker to keep checking.
+
 The code optimizes for the wall clock time of jumping from page to page like the instructions specifies. I chose to do this asynchronously because of the nature of how many IO operations occur and the time that is wasted waiting for that request. Doing it asynchronously allows me to only worry about one thread, the event loop will take care of running the workers whenever there is free time from a request. 
 I also have a Dockerfile included with my application. You can utilize it through the make file, I give instructions below. 
 
 ## Instructions for how to run your Wikiracer:
-Testing:
+#### Testing:
+```Shell 
 make test
-	This command installs the requirements from the requirements.txt file and runs the automated tests end to end tests in django.
-Spin up docker container with application running:
+```
+This command installs the requirements from the requirements.txt file and runs the automated tests end to end tests in django.
+
+#### Spin up docker container with application running:
  ```Shell
  make serve-application
  ```
 Your docker container will be listening on *localhost:8000*
-You can send a post request with a (filling in source and dest with a wiki url or page title)
+
+#### You can send a post request with a (filling in source and dest with a wiki url or page title)
 ```Shell 
 curl -X POST http://127.0.0.1:8000/findpath/  -H 'Content-Type: application/json' -d '{"source" : "Mickey Mouse","destination" : "Albert Einstein"}’
 ```
 
+#### Other make commands available:
+ ```Shell
+ make build
+ make run
+ ```
+ 
 ## Strategies I tried:
 Initial thoughts:
 At first I thought I could have a database to store everything. That would take care of the async issues and before any methods make any calls they would make sure the destination page hasn't been found by checking the db if any other process found it. I thought making those db calls would be unnecessary and time consuming so I pushed forward without pursuing that approach.
 
 ### node js
 
-I have been going through this book called Building Enterprise Javascript applications so thought to start attempting this with node. The asynchronous nature of nodejs made it attractive for decreasing wall clock time between pages. I had a boilerplate app ready to go from the book so I started thinking about how to solve the problem of wikiracing. 
+I have been going through this book called *Building Enterprise Javascript Applications* so thought to start attempting this with node. The asynchronous nature of nodejs made it attractive for decreasing wall clock time between pages. I had a boilerplate app ready to go from the book so I started thinking about how to solve the problem of wikiracing. 
 So I started with the Media wiki api. I read through some of the documentation to find how we can get all the links from a wikipedia page given its title. After finding what I was looking for I poked around more to see if anything else could be useful, I found an api call that can give you all the pages that link to a given page. 
 A big concept in the book was test driven development, I find it really hard to do it without fully understanding how to solve the problem, but I did know what the problem had to do so I wrote an end to end test using cucumber and gherkin to find a path between Rami Malek and 12 Strong (The pages could be easily changed) I chose 12 strong because it just one page away from Rami Malek after 2018 in Film. 
 I wrote the test to make a request to */findpath* with a payload of a source and destination. Then the response should be json with the path. (I wasn’t too focused on returning the time just yet). I started with a findpath handler function to accept the request. This handler would start the process to begin searching for the destination.
@@ -50,7 +62,7 @@ Now I am making 7 workers who get links and 1 worker who checks them and refills
  The search is faster but going back to the media wiki api call from earlier (that gets the pages that link to a page), it would allow me to search backwards from the destination for the source as well as forwards and see if they ever cross. That would allow me to search even faster. That would be the future implementation for this wikiracer. 
 
 ## How long you spent on each part:
-Nodejs version - 				    a day and a half
-Python synchronous version - 			    one day
-Python asynchronous version - 			    two days
-Optimizing async, error checking, dockerizing -	    one day 
+* Nodejs version - 				    a day and a half
+* Python synchronous version - 			    one day
+* Python asynchronous version - 			    two days
+* Optimizing async, error checking, dockerizing -	    one day 
