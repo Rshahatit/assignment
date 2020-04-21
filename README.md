@@ -1,4 +1,4 @@
-# Wikiracer Write up 
+# Wikiracer 
 
 ## High Level Architecture 
 ### Diagram
