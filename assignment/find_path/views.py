@@ -8,7 +8,7 @@ def index(request):
     body = json.loads(request.body)
     source = parse_input(body["source"])
     destination = parse_input(body["destination"])
-    print(source, destination)
+    print(f'starting search from {source} to {destination}')
     if source == destination:
         payload = {"error":True, "message" : "Source and destination should not be the same"}
         return JsonResponse(payload, status=400) 
@@ -16,9 +16,4 @@ def index(request):
         payload = {"error": True, "message" : "You must enter a valid wikipedia link"}
         return JsonResponse(payload, status=400)
     else:
-        payload = start(source, destination)
-        if payload["error"]:
-            return JsonResponse(payload,status=400)
-        else:
-            return JsonResponse(payload, status=200)
-
+        return JsonResponse(start(source, destination))

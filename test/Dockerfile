@@ -3,7 +3,6 @@ FROM python:3.7-stretch
 # RUN apk add py-configobj libusb py-pip python-dev gcc linux-headers uwsgi
 # RUN apk add make
 
-# Cache a layer of OS deps
 RUN apt-get update && apt-get install -y gnupg2 curl
 
 # RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
@@ -25,11 +24,10 @@ COPY ./Makefile /wikiracer/
 
 WORKDIR /wikiracer
 
-RUN make python-dependencies 
-
-
 COPY ./assignment /wikiracer/assignment
+
+# RUN make test 
 
 # WORKDIR /wikiracer/assignment
 # CMD ["ls"]
-CMD ["uwsgi", "/wikiracer/assignment/assignment/uwsgi.ini"]
+# CMD ["python3", "manage.py", "test"]

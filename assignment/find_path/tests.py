@@ -13,6 +13,21 @@ class e2eTest(unittest.TestCase):
         self.goal_payload =  {"source": "Tennessee", "destination" : "Printer (computing)"}
         self.bad_payload =  {"source": "https://google.com", "destination" : "Printer (computing)"}
         self.same_src_dest_payload =  {"source": "Printer (computing)", "destination" : "Printer (computing)"}
+        self.exist =  {"source": "Tennessee", "destination" : "Printer"}
+
+# I commented out this test because it takes a while to get to a depth of 15
+    # def test_depth(self):
+    #     # Issue a POST request.
+    #     response = self.client.post('/findpath/', content_type="application/json", data=self.exist)
+
+    #     # Check that the response is 200 OK.
+    #     self.assertEqual(response.status_code, 200)
+
+    #     # verify the path
+    #     res = response.json()
+    #     if res["error"]:
+    #         message = res["message"]
+    #         self.assertEqual(message, "path does not exist with a depth of 15 from the source page")
 
     def test_same_src_dest(self):
         # Issue a POST request.
@@ -107,6 +122,7 @@ class e2eTest(unittest.TestCase):
             self.assertTrue(verified, message)
             print(f'Path from {source} to {destination}: {path} completed in {duration:0.2f} seconds')
 
+    #aleut is an native alaskan people
     def test_hard(self):
         source = "Super Mario"
         destination = "Aleut"

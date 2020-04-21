@@ -1,0 +1,15 @@
+version: '3.7'
+
+services: 
+    wikiracer-prod:
+        build: 
+            context: ./
+            dockerfile: ./prod/Dockerfile
+        command: "uwsgi /wikiracer/assignment/assignment/uwsgi.ini"
+        ports: 
+            - "8000:8000"
+    wikiracer-test:
+        build:
+            context: ./
+            dockerfile: ./test/Dockerfile
+        command: "make test-docker"

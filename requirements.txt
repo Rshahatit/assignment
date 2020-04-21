@@ -1,2 +1,3 @@
 aiohttp[speedups]
 Django>=2.2.10
+requests
