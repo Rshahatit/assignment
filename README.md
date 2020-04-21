@@ -2,7 +2,7 @@
 
 ## High Level Architecture 
 ### Diagram
-![Image of diagram](https://user-images.githubusercontent.com/11155241/79812892-03e0ff00-832f-11ea-9a14-4345c9b1b088.png)
+![Image of diagram](https://user-images.githubusercontent.com/11155241/79872394-966ab800-839a-11ea-8011-41cd8c68fa53.png)
 
 ## What the code does:
 The wikiracer code takes in a source or destination which can be a wikipedia url or a title for a wikipedia page. It starts at the source page and calls the media wiki api to find the wikipedia pages that have links on that page. It continues calling the media wiki api - searching for the destination page - among the links on the upcoming pages. While it is requesting links on pages from the media wiki api it is asynchronously checking if any of the links it already has retrieved has the destination page among them. I use two asynchronous queues to give each kind of worker their jobs. One queue (titles to visit) is giving our search worker a title and a set of links on the page --- that worker checks if the destination page is in that set then adds all the links into a queue for the fetch worker to fetch all the links for those pages. When the fetch worker gets the links for the title it puts them in the queue (titles to visit) for the search worker to keep checking. I keep track of the depth by incrementing it each time the titles previous page changes. So whenever the previous changes the depth will change because that means we are checking a new depth. I chose to stop searching after a depth of 15 and return to the user that a path could not be found up to that depth. I wrote a test for it but I have commented it out because it takes a long time.
