@@ -62,7 +62,7 @@ Now I am making 7 workers who get links and 1 worker who checks them and refills
  The search is faster but going back to the media wiki api call from earlier (that gets the pages that link to a page), it would allow me to search backwards from the destination for the source as well as forwards and see if they ever cross. That would allow me to search even faster. That would be the future implementation for this wikiracer. 
 
 ## How long you spent on each part:
-Nodejs version - 				    a day and a half
-Python synchronous version - 			    one day
-Python asynchronous version - 			    two days
-Optimizing async, error checking, dockerizing -	    one day 
+* Nodejs version - 				    a day and a half
+* Python synchronous version - 			    one day
+* Python asynchronous version - 			    two days
+* Optimizing async, error checking, dockerizing -	    one day 
